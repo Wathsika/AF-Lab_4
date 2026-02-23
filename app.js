@@ -1,11 +1,19 @@
-const http = require("http");
+const https = require("https");
 
-http
-  .createServer(function (req, res) {
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.write("Hello World!");
-    res.end();
+https
+  .get("https://jsonplaceholder.typicode.com/posts/1", (resp) => {
+    let data = "";
+
+    // A chunk of data has been received.
+    resp.on("data", (chunk) => {
+      data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on("end", () => {
+      console.log(JSON.parse(data));
+    });
   })
-  .listen(8080);
-
-console.log("Server is running at http://localhost:8080");
+  .on("error", (err) => {
+    console.log("Error: " + err.message);
+  });
